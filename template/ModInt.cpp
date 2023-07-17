@@ -1,11 +1,3 @@
-#include <cassert>
-#include <cmath>
-#include <iostream>
-#include <numeric>
-#include <vector>
-
-using i64 = int64_t;
-
 template<class T>
 constexpr T power(T a, i64 b) {
     T res = 1;
@@ -132,16 +124,5 @@ int MInt<0>::Mod = 1;
 template<int V, int P>
 constexpr MInt<P> CInv = MInt<P>(V).inv();
 
-constexpr int P = 998244353;
+constexpr int P = 1000000007;
 using Mi32 = MInt<P>;
-
-int main() {
-    std::cin.tie(nullptr)->sync_with_stdio(false);
-
-    int N, M;
-    std::cin >> N >> M;
-
-    int n = std::log2(N + 1) - 1, m = std::log2(M + 1ll + N) - 1;    // mark
-
-    return 0;
-}

@@ -22,9 +22,11 @@ struct DSU {
 
     bool merge(int a, int b) {
         int fa = find(a), fb = find(b);
+
         if (fa == fb) {
             return false;
         }
+
         siz[fb] += siz[fa];
         f[fa] = fb;
         return true;
