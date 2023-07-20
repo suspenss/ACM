@@ -1,93 +1,44 @@
 #include <algorithm>
-#include <cmath>
-#include <functional>
 #include <iostream>
-#include <numeric>
 #include <vector>
 
 using i64 = int64_t;
 
-template<class T>
-struct SparseTable {
-    int n, layer;
-    std::vector<T> value;
-    std::vector<std::vector<T>> st;
+template<typename T>
+struct Fenwick {
+    int n;
+    std::vector<T> a;
 
-    using optFunction = std::function<T(const T &, const T &)>;
-    optFunction opt;
-    static T defaultOpt(const T &a, const T &b) {
-        return std::max(a, b);
+    Fenwick(int n = 0) {
+        init(n);
     }
 
-    SparseTable(int N, optFunction _opt = defaultOpt) {
-        opt = _opt;
-        init(N);
+    void init(int n) {
+        this->n = n;
+        a.assign(n, T());
     }
 
-    void init(int N) {
-        n = N;
-        layer = std::log2(n) + 1;
-        st.assign(n, std::vector<T>(layer));
-        value.assign(n, 0);
-    }
-
-    void build() {
-        for (int i = 0; i < n; i++) {
-            st[i][0] = i;
-        }
-
-        for (int j = 1; j < layer; j++) {
-            int cur = 1 << (j - 1);
-            for (int i = 0; i + cur < n; i++) {
-                int l = st[i][j - 1];
-                int r = st[i + cur][j - 1];
-                if (opt(value[l], value[r]) == value[l]) {
-                    st[i][j] = l;
-                } else {
-                    st[i][j] = r;
-                }
-            }
+    void add(int x, T v) {
+        for (int i = x + 1; i <= n; i += i & -i) {
+            a[i - 1] += v;
         }
     }
 
-    int indexQuery(int l, int r) {
-        int k = std::log2(r - l + 1);
-        int left = st[l][k];
-        int right = st[r - (1 << k) + 1][k];
-
-        if (opt(value[left], value[right]) == value[left]) {
-            return left;
-        } else {
-            return right;
+    T sum(int x) {
+        auto ans = T();
+        for (int i = x + 1; i > 0; i -= i & -i) {
+            ans += a[i - 1];
         }
+        return ans;
     }
 
-    T query(int l, int r) {
-        return value[indexQuery(l, r)];
-    }
-
-    T &operator[](const int &index) {
-        return value[index];
+    T rangeSum(int l, int r) {
+        return sum(r) - sum(l);
     }
 };
 
 int main() {
     std::cin.tie(nullptr)->sync_with_stdio(false);
-
-    int N, K, L, R;
-    std::cin >> N >> K >> L >> R;
-
-    SparseTable<int> st(N + 1);
-    for (int i = 1; i <= N; i++) {
-        std::cin >> st[i];
-        st[i] += st[i - 1];
-    }
-    st.build();
-
-    for (int i = 0; i <= N; i++) {
-        std::cout << st[i] << ' ';
-    }
-    std::cout << st.query(0, 0) << '\n';
 
     return 0;
 }
