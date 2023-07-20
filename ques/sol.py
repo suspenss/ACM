@@ -1,31 +1,33 @@
-def sol():
-	n = int(input())
-	A = [int(x) for x in input().split()]
-	B = [int(x) for x in input().split()]
+from sys import stdin
+from collections import deque
 
-	s = set()
+input = stdin.readline
 
-	for i in range(n):
-		if (A[i] == 0 and B[i] == 0):
-			continue
-		cur = 0
-		a = A[i]
-		b = B[i]
-		while a > 0:
-			b %= 2 * a
-			[a, b] = (b, abs(a - b))
-			cur += 1
+def solve() -> ():
+    N, Q, K = map(int, input().split())
+    cost    = list(map(int, input().split()))
+    height  = list(map(int, input().split()))
 
-		s.add(cur % 3)
+    dq = deque()
+    maxLen = K; curSum = 0; f = [0] * N
 
-	if (len(s) <= 1):
-		print("YES")
-	else:
-		print("NO")
+    for i in range(N):
+        dq.append(i)
+        curSum += cost[i]
 
-def main():
-	T = int(input())
-	for i in range(T):
-		sol()
+        if i - K + 1 >= 0 and height[i] == height[i - K + 1]:
+            maxLen = K
+        else:
+            maxLen += 1
 
-main()
+        while len(dq) > maxLen:
+            curSum -= cost[dq[0]]
+            dq.popleft()
+
+        f[i] = curSum
+
+    for _ in range(Q):
+        print(f[int(input()) - 1])
+
+if __name__ == '__main__':
+    solve()

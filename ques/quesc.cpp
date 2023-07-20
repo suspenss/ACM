@@ -1,5 +1,6 @@
-#include <cassert>
+#include <algorithm>
 #include <cmath>
+#include <functional>
 #include <iostream>
 #include <numeric>
 #include <vector>
@@ -7,141 +8,86 @@
 using i64 = int64_t;
 
 template<class T>
-constexpr T power(T a, i64 b) {
-    T res = 1;
-    for (; b; b /= 2, a *= a)
-        if (b % 2) res *= a;
-    return res;
-}
+struct SparseTable {
+    int n, layer;
+    std::vector<T> value;
+    std::vector<std::vector<T>> st;
 
-template<int P>
-struct MInt {
-    int x;
-    static int Mod;
+    using optFunction = std::function<T(const T &, const T &)>;
+    optFunction opt;
+    static T defaultOpt(const T &a, const T &b) {
+        return std::max(a, b);
+    }
 
-    constexpr MInt() : x {} {}
-    constexpr MInt(i64 x) : x {norm(x % getMod())} {}
+    SparseTable(int N, optFunction _opt = defaultOpt) {
+        opt = _opt;
+        init(N);
+    }
 
-    constexpr static int getMod() {
-        if (P > 0) {
-            return P;
+    void init(int N) {
+        n = N;
+        layer = std::log2(n) + 1;
+        st.assign(n, std::vector<T>(layer));
+        value.assign(n, 0);
+    }
+
+    void build() {
+        for (int i = 0; i < n; i++) {
+            st[i][0] = i;
+        }
+
+        for (int j = 1; j < layer; j++) {
+            int cur = 1 << (j - 1);
+            for (int i = 0; i + cur < n; i++) {
+                int l = st[i][j - 1];
+                int r = st[i + cur][j - 1];
+                if (opt(value[l], value[r]) == value[l]) {
+                    st[i][j] = l;
+                } else {
+                    st[i][j] = r;
+                }
+            }
+        }
+    }
+
+    int indexQuery(int l, int r) {
+        int k = std::log2(r - l + 1);
+        int left = st[l][k];
+        int right = st[r - (1 << k) + 1][k];
+
+        if (opt(value[left], value[right]) == value[left]) {
+            return left;
         } else {
-            return Mod;
+            return right;
         }
     }
 
-    constexpr static void setMod(int Mod_) {
-        Mod = Mod_;
+    T query(int l, int r) {
+        return value[indexQuery(l, r)];
     }
 
-    constexpr int norm(int x) const {
-        if (x < 0) {
-            x += getMod();
-        }
-        if (x >= getMod()) {
-            x -= getMod();
-        }
-        return x;
-    }
-
-    constexpr int val() const {
-        return x;
-    }
-
-    explicit constexpr operator int() const {
-        return x;
-    }
-
-    constexpr MInt operator-() const {
-        MInt res;
-        res.x = norm(getMod() - x);
-        return res;
-    }
-
-    constexpr MInt inv() const {
-        assert(x != 0);
-        return power(*this, getMod() - 2);
-    }
-
-    constexpr MInt &operator*=(MInt rhs) & {
-        x = 1LL * x * rhs.x % getMod();
-        return *this;
-    }
-
-    constexpr MInt &operator+=(MInt rhs) & {
-        x = norm(x + rhs.x);
-        return *this;
-    }
-
-    constexpr MInt &operator-=(MInt rhs) & {
-        x = norm(x - rhs.x);
-        return *this;
-    }
-
-    constexpr MInt &operator/=(MInt rhs) & {
-        return *this *= rhs.inv();
-    }
-
-    friend constexpr MInt operator*(MInt lhs, MInt rhs) {
-        MInt res = lhs;
-        res *= rhs;
-        return res;
-    }
-
-    friend constexpr MInt operator+(MInt lhs, MInt rhs) {
-        MInt res = lhs;
-        res += rhs;
-        return res;
-    }
-
-    friend constexpr MInt operator-(MInt lhs, MInt rhs) {
-        MInt res = lhs;
-        res -= rhs;
-        return res;
-    }
-
-    friend constexpr MInt operator/(MInt lhs, MInt rhs) {
-        MInt res = lhs;
-        res /= rhs;
-        return res;
-    }
-
-    friend constexpr std::istream &operator>>(std::istream &is, MInt &a) {
-        i64 v;
-        is >> v;
-        a = MInt(v);
-        return is;
-    }
-
-    friend constexpr std::ostream &operator<<(std::ostream &os, const MInt &a) {
-        return os << a.val();
-    }
-
-    friend constexpr bool operator==(MInt lhs, MInt rhs) {
-        return lhs.val() == rhs.val();
-    }
-
-    friend constexpr bool operator!=(MInt lhs, MInt rhs) {
-        return lhs.val() != rhs.val();
+    T &operator[](const int &index) {
+        return value[index];
     }
 };
-
-template<>
-int MInt<0>::Mod = 1;
-
-template<int V, int P>
-constexpr MInt<P> CInv = MInt<P>(V).inv();
-
-constexpr int P = 998244353;
-using Mi32 = MInt<P>;
 
 int main() {
     std::cin.tie(nullptr)->sync_with_stdio(false);
 
-    int N, M;
-    std::cin >> N >> M;
+    int N, K, L, R;
+    std::cin >> N >> K >> L >> R;
 
-    int n = std::log2(N + 1) - 1, m = std::log2(M + 1ll + N) - 1;    // mark
+    SparseTable<int> st(N + 1);
+    for (int i = 1; i <= N; i++) {
+        std::cin >> st[i];
+        st[i] += st[i - 1];
+    }
+    st.build();
+
+    for (int i = 0; i <= N; i++) {
+        std::cout << st[i] << ' ';
+    }
+    std::cout << st.query(0, 0) << '\n';
 
     return 0;
 }

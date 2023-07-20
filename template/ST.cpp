@@ -1,5 +1,5 @@
 template<class T>
-struct ST {
+struct SparseTable {
     int n;
     std::vector<std::vector<T>> st;
 
@@ -9,7 +9,7 @@ struct ST {
         return std::max(a, b);
     }
 
-    ST(const std::vector<T> &_init, optFunction _opt = defaultOpt) {
+    SparseTable(const std::vector<T> &_init, optFunction _opt = defaultOpt) {
         opt = _opt;
         init(_init);
     }
