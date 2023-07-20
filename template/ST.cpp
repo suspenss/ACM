@@ -14,7 +14,12 @@ struct SparseTable {
         init(_init);
     }
 
-    void init(const std::vector<T> &_init) {
+    SparseTable(const std::ranges::iota_view<int, int> _init, optFunction _opt = defaultOpt) {
+        opt = _opt;
+        init(_init);
+    }
+
+    void init(auto &_init) {
         n = _init.size();
         int cap = std::log2(n) + 1;
         st.assign(n, std::vector<T>(cap));
