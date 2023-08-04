@@ -22,3 +22,10 @@ namespace io {
         }
     } in;
 }    // namespace io
+
+int main() {
+    int n;
+
+    io::in >> n;
+    std::cout << n << '\n';
+}

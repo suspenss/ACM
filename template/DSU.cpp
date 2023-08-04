@@ -1,15 +1,14 @@
-struct Disjoint_Set {
+struct DisjointSet {
     std::vector<int> f, _size;
 
-    Disjoint_Set() {}
-    Disjoint_Set(int n) {
+    DisjointSet() {}
+    DisjointSet(int n) {
         init(n);
     }
 
     void init(int n) {
         f.resize(n);
         std::iota(f.begin(), f.end(), 0);
-        std::iota(weight.begin(), weight.end(), 0);
         _size.assign(n, 1);
     }
 

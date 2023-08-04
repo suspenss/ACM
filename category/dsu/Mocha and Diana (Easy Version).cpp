@@ -7,7 +7,7 @@ typedef long long i64;
 
 std::vector<int> fa(1000), fb(1000);
 
-int find(int x, auto & f) {
+int find(int x, auto &f) {
     if (f[x] != x) f[x] = find(f[x], f);
     return f[x];
 }
@@ -45,7 +45,7 @@ void sol() {
     for (auto [u, v] : ans) std::cout << u << ' ' << v << '\n';
 }
 
-int main () {
+int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
 

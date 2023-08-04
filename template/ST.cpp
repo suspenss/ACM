@@ -14,10 +14,13 @@ struct SparseTable {
         init(_init);
     }
 
+// c++20 supports  range view as parameter
+#ifdef SUPPORTS_CPP20
     SparseTable(const std::ranges::iota_view<int, int> _init, optFunction _opt = defaultOpt) {
         opt = _opt;
         init(_init);
     }
+#endif
 
     void init(auto &_init) {
         n = _init.size();

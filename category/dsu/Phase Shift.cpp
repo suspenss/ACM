@@ -20,19 +20,19 @@ void sol() {
     std::string s;
     std::cin >> n >> s;
 
-    std::iota(fa.begin(), fa.end(), 0); // 初始化父节点数组
-    std::vector<int> vis(30); // 初始化vis数组为零, 用来记录某个字母是否以构成环了
-    std::map<char, char> ans; // 用来记录给出的字符串的某个字符的环上的上一个值 ( 映射 )
+    std::iota(fa.begin(), fa.end(), 0);    // 初始化父节点数组
+    std::vector<int> vis(30);              // 初始化vis数组为零, 用来记录某个字母是否以构成环了
+    std::map<char, char> ans;    // 用来记录给出的字符串的某个字符的环上的上一个值 ( 映射 )
 
     for (auto c : s) {
-        if (ans.count(c)) continue; // 重复元素不用再进行处理
-        int idc = find(c - 'a'); // 查询元素的集合
+        if (ans.count(c)) continue;    // 重复元素不用再进行处理
+        int idc = find(c - 'a');       // 查询元素的集合
 
         for (int i = 0; i < 26; i++) {
-            int idi = find(i); // 查询匹配元素的集合
-            if (vis[i] == 0 && idc != idi) { // 如果这个字母没有被使用过, 且不合待匹配元素在一个集合中
-                fa[idi] = idc, ans[c] = i + 'a'; // 匹配字母指向待匹配字母的集合, 并建立映射
-                vis[i] = 1; // 标记匹配字母已被使用
+            int idi = find(i);                  // 查询匹配元素的集合
+            if (vis[i] == 0 && idc != idi) {    // 如果这个字母没有被使用过, 且不合待匹配元素在一个集合中
+                fa[idi] = idc, ans[c] = i + 'a';    // 匹配字母指向待匹配字母的集合, 并建立映射
+                vis[i] = 1;                         // 标记匹配字母已被使用
                 break;
             } else if (vis[i] == 0 && ans.size() == 25) {
                 // 特殊情况: 26 个不相同的字母, 则最后一个一定是

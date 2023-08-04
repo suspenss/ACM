@@ -1,9 +1,9 @@
 template<typename T>
-struct Fenwick {
+struct FenwickTree {
     int n;
     std::vector<T> a;
 
-    Fenwick(int n = 0) {
+    FenwickTree(int n = 0) {
         init(n);
     }
 
