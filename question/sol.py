@@ -1,18 +1,24 @@
-from sys  import stdin
-from math import sqrt
+class Square:
+    def __init__(self):
+        pass
 
-input = stdin.readline
-    
-class Point:
-    def __init__(self, x = 0, y = 0):
-        self.x = x
-        self.y = y
+    @property
+    def side(self):
+        return self._side
 
-    def __lt__(self, other):
-        self__ = (self.x ** 2) + (self.y ** 2)
-        other__ = (other.x ** 2) + (other.y ** 2)
-        return self__ < other__
+    @side.setter
+    def side(self, x: int):
+        assert x >= 0, "invalid"
+        self._side = x
 
+    @side.deleter
+    def side(self):
+        self._side = 0
 
-a = Point(1, 3); b = Point(2, 9); c = Point(-1, -101)
-print(a < b < c)
+    @property
+    def area(self):
+        return self._side ** 2
+
+a: Square = Square()
+a.side = 2
+print(a.area)

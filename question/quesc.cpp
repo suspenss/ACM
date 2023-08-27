@@ -1,19 +1,9 @@
-#include <algorithm>
-#include <cmath>
-#include <functional>
-#include <iostream>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <vector>
+#include <bits/stdc++.h>
 
-using i64 = int64_t;
+using i64 = long long;
 
 int main() {
     std::cin.tie(nullptr)->sync_with_stdio(false);
-
-    int N, M;
-    std::cin >> N;
 
     return 0;
 }
