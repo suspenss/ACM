@@ -1,8 +1,11 @@
-struct DisjointSet {
+#include <bits/stdc++.h>
+
+using i64 = long long;
+
+struct DSU {
     std::vector<int> f, _size;
 
-    DisjointSet() {}
-    DisjointSet(int n) {
+    DSU(int n) {
         init(n);
     }
 
@@ -33,3 +36,28 @@ struct DisjointSet {
         return _size[find(x)];
     }
 };
+
+int main() {
+    std::cin.tie(nullptr)->sync_with_stdio(false);
+
+    int N, M, Q;
+    std::cin >> N >> M >> Q;
+
+    DSU dsu(N);
+    std::vector<std::vector<int>> adj(N);
+
+    for (int i = 0, u, v; i < M; i++) {
+        std::cin >> u >> v;
+        u--, v--;
+        adj[u].emplace_back(v);
+        adj[v].emplace_back(u);
+        dsu.merge(u, v);
+    }
+
+    std::vector<int> diameter(N);
+
+    auto dfs = [&](auto self, int u, int f) {
+    };
+
+    return 0;
+}
